@@ -114,6 +114,42 @@ class PasswordChecker:
     
 
 
+    def check_sequential_characters(self, password):
+        # 6th check: Whether there are sequential characters in password or not...
+        # The argument is password(str) which is simply the password we're checking.
+        # It returns tuple: (bool, str) - (is_valid, message).
+
+        password_lower = password.lower()
+
+        # Check for sequential characters
+        for i in range(len(password) - 2):
+
+            # First in ascending format
+            if (ord(password_lower[i+1]) == ord(password_lower[i]) + 1 and ord(password_lower[i+2]) == ord(password_lower[i]) + 2):
+                return False, f"✗ Contains sequential characters"
+            
+            # Now in descending format
+            if (ord(password_lower[i+1]) == ord(password_lower[i]) - 1 and ord(password_lower[i+2]) == ord(password_lower[i]) - 2):
+                return False, f"✗ Contains sequential characters"
+            
+        return True, "✓ No sequential characters found."
+    
+
+
+    def check_repeated_characters(self, password):
+        # 7th check: Whether there are repeated characters in password or not...
+        # The argument is password(str) which is simply the password we're checking.
+        # It returns tuple: (bool, str) - (is_valid, message).
+
+        for i in range(len(password) - 2):
+            if password[i] == password[i+1] == password[i+2]:
+                return False, f"✗ Contains repeated characters"
+        
+        return True, "✓ No repeated characters found."
+
+    
+
+
 
 
 
