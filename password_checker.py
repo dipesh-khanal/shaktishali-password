@@ -48,9 +48,9 @@ class PasswordChecker:
         length = len(password)
 
         if length >= min_length:
-            return True, f"✓ Length: {length} characters (minimum: {min_length})"     # If meets length criteria
+            return (True, f"✓ Length: {length} characters (minimum: {min_length})")     # If meets length criteria
         else:
-            return False, f"✗ Length: {length} characters (minimum required: {min_length})"    # If doesn't meet length criteria
+            return (False, f"✗ Length: {length} characters (minimum required: {min_length})")    # If doesn't meet length criteria
     
 
 
@@ -63,9 +63,9 @@ class PasswordChecker:
         required = 2
 
         if uppercase_count >= required:
-            return True, f"✓ Uppercase letters: {uppercase_count} (minimum: {required})"   # If meets uppercase criteria
+            return (True, f"✓ Uppercase letters: {uppercase_count} (minimum: {required})")   # If meets uppercase criteria
         else:
-            return False, f"✗ Uppercase letters: {uppercase_count} (minimum required: {required})"  # If dones't meet uppercase criteria
+            return (False, f"✗ Uppercase letters: {uppercase_count} (minimum required: {required})")  # If dones't meet uppercase criteria
     
 
 
@@ -78,9 +78,9 @@ class PasswordChecker:
         required = 2
 
         if lowercase_count >= required:
-            return True, f"✓ Lowercase letters: {lowercase_count} (minimum: {required})"   # If meets lowercase criteria
+            return (True, f"✓ Lowercase letters: {lowercase_count} (minimum: {required})")   # If meets lowercase criteria
         else:
-            return False, f"✗ Lowercase letters: {lowercase_count} (minimum required: {required})"  # If doesn't meet lowercase criteria
+            return (False, f"✗ Lowercase letters: {lowercase_count} (minimum required: {required})")  # If doesn't meet lowercase criteria
     
 
 
@@ -93,9 +93,9 @@ class PasswordChecker:
         required = 2
 
         if number_count >= required:
-            return True, f"✓ Numbers: {number_count} (minimum: {required})"   # If meets number criteria
+            return (True, f"✓ Numbers: {number_count} (minimum: {required})")   # If meets number criteria
         else:
-            return False, f"✗ Numbers: {number_count} (minimum required: {required})"  # If doesn't meet number criteria
+            return (False, f"✗ Numbers: {number_count} (minimum required: {required})")  # If doesn't meet number criteria
     
 
 
@@ -109,9 +109,9 @@ class PasswordChecker:
         required = 2
 
         if special_char_count >= required:
-            return True, f"✓ Special characters: {special_char_count} (minimum: {required})"   # If meets special character criteria
+            return (True, f"✓ Special characters: {special_char_count} (minimum: {required})")   # If meets special character criteria
         else:
-            return False, f"✗ Special characters: {special_char_count} (minimum required: {required})"  # If doesn't meet special character criteria
+            return (False, f"✗ Special characters: {special_char_count} (minimum required: {required})")  # If doesn't meet special character criteria
     
 
 
@@ -127,13 +127,13 @@ class PasswordChecker:
 
             # First in ascending format
             if (ord(password_lower[i+1]) == ord(password_lower[i]) + 1 and ord(password_lower[i+2]) == ord(password_lower[i]) + 2):
-                return False, f"✗ Contains sequential characters"
+                return (False, f"✗ Contains sequential characters")
             
             # Now in descending format
             if (ord(password_lower[i+1]) == ord(password_lower[i]) - 1 and ord(password_lower[i+2]) == ord(password_lower[i]) - 2):
-                return False, f"✗ Contains sequential characters"
+                return (False, f"✗ Contains sequential characters")
             
-        return True, "✓ No sequential characters found."
+        return (True, "✓ No sequential characters found.")
     
 
 
@@ -143,11 +143,11 @@ class PasswordChecker:
         # It returns tuple: (bool, str) - (is_valid, message).
 
         if not self.common_passwords:
-            return True, "Common password check skipped (no file)"
+            return (True, "Common password check skipped (no file)")
         if password.lower() in self.common_passwords:
-            return False, "✗ This is a commonly used password (not secure)"   
+            return (False, "✗ This is a commonly used password (not secure)")   
         else:
-            return True, "✓ Not a common password" 
+            return (True, "✓ Not a common password") 
 
 
 
@@ -162,9 +162,9 @@ class PasswordChecker:
 
         if match:
             repeated_char = match.group(0)
-            return False, f"✗ Contains repeated characters: ('{repeated_char}')"
+            return (False, f"✗ Contains repeated characters: ('{repeated_char}')")
         else:
-            return True, "✓ No repeated characters"
+            return (True, "✓ No repeated characters")
     
 
 
