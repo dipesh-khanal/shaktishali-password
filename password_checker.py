@@ -10,7 +10,8 @@ class PasswordChecker:
         # This initializes password checker and loads common passwords from attached file..
 
         self.common_passwords = self.load_common_passwords()
-    
+
+
 
     def load_common_passwords(self):
         # This loads the common passwords file into a set which allows faster lookup.
@@ -137,23 +138,136 @@ class PasswordChecker:
 
 
     def check_repeated_characters(self, password):
-        # 7th check: Whether there are repeated characters in password or not...
+        # 7th check: Whether there are characters repeated consecutively more than twice in password or not...
         # The argument is password(str) which is simply the password we're checking.
         # It returns tuple: (bool, str) - (is_valid, message).
 
-        for i in range(len(password) - 2):
-            if password[i] == password[i+1] == password[i+2]:
-                return False, f"✗ Contains repeated characters"
-        
-        return True, "✓ No repeated characters found."
+        # Check for pattern (3 or more repeated characters)
+        pattern = r'(.)\1{2,3}'
+        match = re.search(pattern, password)
 
+        if match:
+            repeated_char = match.group(0)
+            return False, f"✗ Contains repeated characters: ('{repeated_char}')"
+        else:
+            return True, "✓ No repeated characters"
     
 
 
+    def calculate_score(self, password):
+        # THis calculates overall score for password strentgh (0-100)
+        # The argument is password(str) which is simply the password we're checking.
+        # It returns int which is the score (0-100).
+
+        score = 0
+
+        # Score from length (max 20 points)
+        length = len(password)
+        if length >= 20:
+            score += 20
+        elif length >= 16:
+            score += 15
+        elif length >= 12:
+            score += 10
+        elif length >= 8:
+            score += 5
+        
+        # Score from password's diversity (max 30 points)
+        if self.check_uppercase(password)[0]:
+            score += 8
+        if self.check_lowercase(password)[0]:
+            score += 8
+        if self.check_numbers(password)[0]:
+            score += 7
+        if self.check_special_characters(password)[0]:
+            score += 7
+        
+        # Score from security check (max 50 points)
+        if self.check_common_password(password)[0]:
+            score += 15
+        if self.check_sequential_characters(password)[0]:
+            score += 10
+        if self.check_repeated_characters(password)[0]:
+            score += 10
+        
+
+        # Bonus
+        # If all 4 character types exist
+        has_all_types = (
+            self.check_uppercase(password)[0] and
+            self.check_lowercase(password)[0] and
+            self.check_numbers(password)[0] and
+            self.check_special_characters(password)[0]
+        )
+        if has_all_types:
+            score += 10
+        
+
+        # Bonus for extra length
+        if length > 20:
+            score += 5
+        
+        return min(score, 100)     # To limit max score to 100
+    
 
 
+    def get_strength_label(self, score):
+        # This gives a strength label based on score.
+        # The argument is score(int) which is the score (0-100).
+        # It returns str which is the strength label.
+
+        if score >= 86:
+            return "Very Strong"
+        elif score >= 71:
+            return "Strong"
+        elif score >= 51:
+            return "Moderate"
+        elif score >= 26:
+            return "Weak"
+        else:
+            return "Very Weak"
+    
 
 
+    def check_password(self, password):
+        # This is the main function to check the password against all criteria.
+        # The argument is password(str) which is simply the password we're checking.
+        # It returns dict which contains overall results and details.
+
+        if not password:
+            return {
+                'score': 0,
+                'strength': 'Very Weak',
+                'results': [(False, "✗ Password cannot be empty.")]
+            }
+    
+
+        # Running all checks here
+        results = [
+            self.check_length(password),
+            self.check_uppercase(password),
+            self.check_lowercase(password),
+            self.check_numbers(password),
+            self.check_special_characters(password),
+            self.check_common_password(password),
+            self.check_sequential_characters(password),
+            self.check_repeated_characters(password)
+        ]
+
+        # Calculates score here
+        score = self.calculate_score(password)
+        strength = self.get_strength_label(score)
+
+        return {
+            'score': score,
+            'strength': strength,
+            'results': results,
+            'passed': sum(1 for r in results if r[0]),
+            'total': len(results)
+        }
+    
+
+    
 def main():
     # Main driver function to test the password checker in console mode.
 
